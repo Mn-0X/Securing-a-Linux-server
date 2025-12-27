@@ -1,0 +1,22 @@
+# let’s look at update
+#When you run apt update it retrieves the latest version information from the package repositories that are specified in the software sources configuration file.
+#All this command does is refresh the package index and ensure all package information is current.
+
+apt update
+
+#You can now probably guess what the upgrade command does. When this command is run, 
+#it consults the local package index to see which packages have upgrades available.
+#If any are available it will install the latest versions of those packages. 
+#Be aware that you will be asked whether you want to upgrade the packages, so some interactivity is expected. However,
+#you can automate this by running update along with the option -y like so:
+
+apt -y upgrade
+
+#Enable Automatic Updates
+apt install unattended-upgrades
+
+#Before moving on, a cautionary note: it’s not a good idea to enable automatic updates on production systems. 
+#For development and home environments like mine, this is perfectly fine. However, for production environments
+#it’s best to schedule defined maintenance windows for security patching and upgrades — 
+#but only once you’ve tested how the updates will affect deployed products in a controlled development, or test, environment
+--------------------------------------------------------------------------------------------------------------------------------------------
