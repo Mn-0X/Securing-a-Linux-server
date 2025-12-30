@@ -20,3 +20,7 @@ apt install unattended-upgrades
 #it’s best to schedule defined maintenance windows for security patching and upgrades — 
 #but only once you’ve tested how the updates will affect deployed products in a controlled development, or test, environment
 --------------------------------------------------------------------------------------------------------------------------------------------
+#Limited User Account
+adduser admin
+#let’s give our admin user root privileges.
+adduser admin sudo
