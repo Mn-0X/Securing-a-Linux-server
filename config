@@ -12,15 +12,133 @@ apt update
 
 apt -y upgrade
 
-#Enable Automatic Updates
+#Enable Automatic Updates 
 apt install unattended-upgrades
-
+>>...warning .....>>>>
 #Before moving on, a cautionary note: it’s not a good idea to enable automatic updates on production systems. 
 #For development and home environments like mine, this is perfectly fine. However, for production environments
 #it’s best to schedule defined maintenance windows for security patching and upgrades — 
 #but only once you’ve tested how the updates will affect deployed products in a controlled development, or test, environment
+
+#Set Up Update Notifications
+# Install apticron for email notifications
+sudo apt install apticron
+
+# Configure in /etc/apticron/apticron.conf
+EMAIL="your-email@domain.com"
 --------------------------------------------------------------------------------------------------------------------------------------------
 #Limited User Account
 adduser admin
 #let’s give our admin user root privileges.
 adduser admin sudo
+
+
+--------------------------------------------------------------------------------------------
+#Secure SSH Access
+#Change the Default SSH Port
+sudo nano /etc/ssh/sshd_config
+# Change port (example: use port 2222 instead of 22)
+Port 2222
+
+# Restart SSH service
+sudo systemctl restart sshd
+#Disable Root SSH Login
+#In /etc/ssh/sshd_config
+PermitRootLogin no
+
+#Enable Key-Based Authentication
+# Generate SSH key pair on your local machine
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+# Copy public key to server
+ssh-copy-id -p 2222 username@your-server-ip
+
+# Disable password authentication
+# In /etc/ssh/sshd_config:
+PasswordAuthentication no
+PubkeyAuthentication yes
+
+-----------------------------------------------------------
+#Configure a Robust Firewall
+# Install and enable UFW
+sudo ufw enable
+
+# Default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow SSH (adjust port as needed)
+sudo ufw allow 2222/tcp
+
+# Allow HTTP and HTTPS
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+
+# Check status
+sudo ufw status verbose
+--------------------------------------------------------------------
+#Advanced Firewall Rules
+# Rate limiting for SSH (prevents brute force)
+sudo ufw limit 2222/tcp
+
+# Allow specific IP ranges
+sudo ufw allow from 192.168.1.0/24 to any port 22
+
+# Block specific countries (using iptables-geoip)
+sudo ufw deny from country-code
+---------------------------------------------------------------------
+#Implementing appropriate user management
+#Do not operate services as a root service, and always follow the principle of least privilege.
+#Create Service Users
+# Create system user for web services
+sudo useradd -r -s /bin/false -d /var/www webuser
+
+# Create regular user with sudo privileges
+sudo adduser newadmin
+sudo usermod -aG sudo newadmin
+Configure Sudo Properly
+# Edit sudoers file safely
+sudo visudo
+
+# Example: Allow user to run specific commands without password
+username ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx
+---------------------------------------------------------------------------
+ #Disable Unnecessary Services
+#Every running service is a potential attack vector.
+# List all running services
+sudo systemctl list-units --type=service --state=running
+
+# Disable unnecessary services
+sudo systemctl disable service-name
+sudo systemctl stop service-name
+# Check listening ports
+sudo netstat -tulpn
+# Monitor active connections
+netstat -an | grep ESTABLISHED
+
+# Check for listening services
+ss -tlnp
+
+-----------------------------------------------------
+#Implementing file integrity monitoring
+#Detecting unauthorized changes to critical system files
+
+# Install AIDE
+sudo apt install aide
+
+# Initialize database
+sudo aideinit
+
+# Move database to final location
+sudo mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+
+# Run check
+sudo aide --check
+--------------------------------------------------------------------------
+
+# Create cron job for daily checks
+sudo crontab -e
+
+# Add line:
+0 2 * * * /usr/bin/aide --check | mail -s "AIDE Report" your-email@domain.com
+-----------------------------------------------------------------------------------------
