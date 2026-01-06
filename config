@@ -118,27 +118,4 @@ netstat -an | grep ESTABLISHED
 
 # Check for listening services
 ss -tlnp
-
------------------------------------------------------
-#Implementing file integrity monitoring
-#Detecting unauthorized changes to critical system files
-
-# Install AIDE
-sudo apt install aide
-
-# Initialize database
-sudo aideinit
-
-# Move database to final location
-sudo mv /var/lib/aide/aide.db.new /var/lib/aide/aide.db
-
-# Run check
-sudo aide --check
---------------------------------------------------------------------------
-
-# Create cron job for daily checks
-sudo crontab -e
-
-# Add line:
-0 2 * * * /usr/bin/aide --check | mail -s "AIDE Report" your-email@domain.com
 -----------------------------------------------------------------------------------------
