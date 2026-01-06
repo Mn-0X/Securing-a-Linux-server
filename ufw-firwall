@@ -1,0 +1,91 @@
+#you can check if UFW is installed 
+sudo ufw status
+
+#If UFW isn’t installed, you can install it using:
+sudo apt-get install ufw
+
+#Enabling UFW
+sudo ufw enable
+
+#To check the status of UFW, use:
+sudo ufw status
+
+#Setting Up Basic Rules
+#UFW makes it easy to allow or deny traffic. Here are some common rules:
+#Allow SSH (Port 22):
+
+sudo ufw allow ssh
+
+#Allow HTTP (Port 80) and HTTPS (Port 443):
+
+sudo ufw allow http
+sudo ufw allow https
+
+#Deny All Incoming Traffic:
+sudo ufw default deny incoming
+
+
+#Allow All Outgoing Traffic:
+sudo ufw default allow outgoing
+
+#Advanced UFW Rules
+#Allow Specific IP Address:
+sudo ufw allow from 192.168.1.10
+
+#Allow Traffic on a Specific Port and IP:
+sudo ufw allow from 192.168.1.10 to any port 22
+
+#Enable Logging:
+sudo ufw logging on
+
+#Disabling UFW
+sudo ufw disable
+
+#Common Use Cases for UFW
+#Securing a Web Server: Allow traffic on ports 80 and 443 for web traffic, and deny all other incoming connections except SSH.
+#Protecting a Database: Restrict database access to specific IP addresses, allowing only trusted hosts to connect.
+
+#Checking Firewall Status and Rules
+sudo ufw status numbered
+
+#To remove a port, use the ufw delete command. It's recommended to use the ufw status numbered command to identify the rule number before deleting it. For example, to delete the rule with the number 100, run the following command:
+sudo ufw delete 100
+
+#Block an IP Address 
+sudo ufw deny from 192.168.1.1
+
+#Block a Subnet
+sudo ufw deny from 192.168.1.0/24
+
+#Allow an IP Address
+sudo ufw allow from 192.168.1.1
+
+
+#Allow Incoming Connections to a Network Interface
+sudo ufw allow in on eth0 from 192.168.1.1
+
+
+#List Available Application Profiles
+#Upon installation, applications that rely on network communications will typically set up a UFW profile that you can use to allow connection from external addresses. This is often the same as running ufw allow from, with the advantage of providing a shortcut that abstracts the specific port numbers a service uses and provides a user-friendly nomenclature to referenced services.
+#To list which profiles are currently available, run the following:
+
+sudo ufw app list
+--Output
+Available applications:
+  OpenSSH
+
+
+#Enable Application Profile
+sudo ufw allow “OpenSSH”
+
+
+#Disable Application Profile
+
+sudo ufw delete allow "OpenSSH"
+
+#Allow Incoming PORT from Specific IP Address or Subnet
+sudo ufw allow from 192.168.1.1 proto tcp to any port 7788
+sudo ufw allow from 192.168.1.0/24 proto tcp to any port 1584
+
+#Allow All Incoming Connections to Port
+sudo ufw allow proto tcp from any to any port 80,443
